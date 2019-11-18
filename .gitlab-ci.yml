@@ -1,0 +1,61 @@
+image: registry.gitlab.com/kolanich-subgroups/docker-images/prebuilder_dependencies:latest
+#image: registry.gitlab.com/kolanich-subgroups/docker-images/python_graal:latest
+
+stages:
+  - build
+  - trigger
+  - test
+
+variables:
+  DOCKER_DRIVER: overlay2
+  SAST_ANALYZER_IMAGE_TAG: latest
+  SAST_DISABLE_DIND: "true"
+
+include:
+  - template: SAST.gitlab-ci.yml
+  #- template: DAST.gitlab-ci.yml
+  - template: License-Management.gitlab-ci.yml
+  #- template: Container-Scanning.gitlab-ci.yml
+  #- template: Dependency-Scanning.gitlab-ci.yml
+  - template: Code-Quality.gitlab-ci.yml
+
+build:
+  tags:
+    - shared
+    - linux
+  stage: build
+  variables:
+    GIT_DEPTH: "1"
+    PYTHONUSERBASE: "${CI_PROJECT_DIR}/python_user_packages"
+
+  before_script:
+    - export PATH="$PATH:$PYTHONUSERBASE/bin" # don't move into `variables`
+
+  script:
+    - python3 setup.py bdist_wheel
+    - mv ./dist/*.whl ./dist/prebuilder-0.CI-py3-none-any.whl
+    - pip install --user --upgrade --pre ./dist/*.whl
+    - coverage run -a --source=prebuilder -m pytest --junitxml=./rspec.xml ./tests/tests.py
+    #- coverage run -a --source=prebuilder -m prebuilder
+    - coveralls || true
+    - codecov || true
+
+  cache:
+    paths:
+      - /usr/local/site-packages
+      - /usr/local/lib/python*/site-packages
+
+  artifacts:
+    paths:
+      - dist
+    reports:
+      junit: ./rspec.xml
+
+update_docker_image:
+  only:
+    - master
+  stage: trigger
+  allow_failure: true
+  trigger:
+    project: KOLANICH-subgroups/docker-images/prebuilder
+    strategy: depend

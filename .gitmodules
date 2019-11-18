@@ -1,0 +1,5 @@
+[submodule "doc"]
+	path = doc
+	url = https://github.com/KOLANICH/prebuilder.py.wiki.git
+	branch = master
+
