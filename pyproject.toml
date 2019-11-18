@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=61.2.0", "wheel", "setuptools_scm[toml]>=3.4.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prebuilder"
+authors = [{name = "KOLANICH"}]
+description = "A framework for writing binary packages build pipelines in python instead of bash"
+readme = "ReadMe.md"
+keywords = ["python", "building", "CI", "bleeding edge"]
+license = {text = "Unlicense"}
+classifiers = [
+	"Programming Language :: Python",
+	"Programming Language :: Python :: 3",
+	"Development Status :: 4 - Beta",
+	"Environment :: Other Environment",
+	"Intended Audience :: Developers",
+	"License :: Public Domain",
+	"Operating System :: OS Independent",
+	"Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.4"
+dependencies = [
+	"AnyVer @ git+https://github.com/prebuilder/AnyVer.py.git",
+	"TargetTriple @ git+https://github.com/prebuilder/TargetTriple.py.git",
+	"ClassDictMeta @ git+https://github.com/prebuilder/ClassDictMeta.py.git",
+	"FHS @ git+https://github.com/prebuilder/FHS.py.git",
+	"fsutilz @ git+https://github.com/prebuilder/fsutilz.py.git",
+	"fuckapt @ git+https://github.com/prebuilder/fuckapt.py",
+	"File2Package @ git+https://github.com/File2Package.py/File2Package.py.git",
+	"File2Package.backend.dpkg @ git+https://github.com/File2Package.py/File2Package.backend.dpkg",
+	"pantarei @ git+https://github.com/KOLANICH-libs/pantarei.py.git",
+	"RichConsole[colorama] @ git+https://github.com/KOLANICH-libs/RichConsole.git",
+	"sh @ git+https://github.com/amoffat/sh.git", # MIT
+	"pyelftools @ git+https://github.com/eliben/pyelftools.git", # Unlicense
+	"GitPython @ git+https://github.com/gitpython-developers/GitPython.git", # BSD-3-Clause
+	"patch_ng @ git+https://github.com/conan-io/python-patch-ng",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/prebuilder/prebuilder.py"
+
+[project.optional-dependencies]
+cmake = ["CMake @ git+https://github.com/KOLANICH/CMake.py.git"] # Unlicense
+meson = ["mesonbuild @ https://github.com/mesonbuild/meson"] # Apache-2.0
+"importers.rpm" = ["python-rpm-spec @ https://github.com/bkircher/python-rpm-spec"] # MIT
+pkgconfig = ["pykg-config @ https://github.com/gbiggs/pykg-config"]
+
+[tool.setuptools]
+zip-safe = true
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = [
+	"prebuilder",
+	"prebuilder.*",
+]
+namespaces = false
+
+[tool.setuptools_scm]

@@ -1,0 +1,11 @@
+__pycache__
+*.pyc
+*.pyo
+/*.egg-info
+/build
+/dist
+/.eggs
+/monkeytype.sqlite3
+/*.srctrldb
+/*.srctrlbm
+/*.srctrlprj
